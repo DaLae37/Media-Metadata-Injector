@@ -15,16 +15,19 @@ class photo_injector(injector) :
                 
                 exif_data = result_photo.info.get("exif")
                 if exif_data :
-                    return
+                    exif_dictionary = piexif.load(exif_data)
                 else :
-                    exif_dictionary = {"0th": {}, "Exif": {}, "GPS": {}, "1st": {}, "thumbnail": None}
-                    exif_dictionary["Exif"][piexif.ExifIFD.DateTimeOriginal] = creation_time
-                    exif_dictionary["Exif"][piexif.ExifIFD.DateTimeDigitized] = creation_time
+                    exif_dictionary = {"0th": {}, "Exif": {}, "GPS": {}, "1st": {}, "thumbnail": None}           
                 
-                    exif_bytes = piexif.dump(exif_dictionary)
-                    result_photo.save(self.result_directory + "/" + photo_name, exif=exif_bytes)
-                    
-                    print(photo_name + " is Finished")
+                if exif_dictionary["Exif"].get(piexif.ExifIFD.DateTimeOriginal) != None :
+                    print(photo_name + " is already had Exif data")
+                else :
+                    exif_dictionary["Exif"][piexif.ExifIFD.DateTimeOriginal] = creation_time
+                    exif_dictionary["Exif"][piexif.ExifIFD.DateTimeDigitized] = creation_time         
+                
+                exif_bytes = piexif.dump(exif_dictionary)
+                result_photo.save(self.result_directory + "/" + photo_name, exif=exif_bytes)
+                print(photo_name + " is Finished")
                 
             except Exception as e:
                 print("Error : ", e)

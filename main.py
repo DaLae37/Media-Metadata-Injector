@@ -40,6 +40,8 @@ if __name__ == "__main__" :
                 photo_list.append(file_name)
             elif media_type == 2 :
                 video_list.append(file_name)
+        else :
+            print(file_name + " is unavailable media type")
     
     photo.inject_metadata(photo_list)
     video.inject_metadata(video_list)
